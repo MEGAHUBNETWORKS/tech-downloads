@@ -5,7 +5,7 @@ import random
 import edge_tts
 import PIL.Image
 
-# --- THE CRITICAL FIX FOR IMAGING ERRORS ---
+# --- FIXES ---
 if not hasattr(PIL.Image, 'ANTIALIAS'):
     PIL.Image.ANTIALIAS = PIL.Image.Resampling.LANCZOS
 
@@ -14,13 +14,13 @@ from moviepy.editor import VideoFileClip, AudioFileClip
 from simple_youtube_api.Channel import Channel
 from simple_youtube_api.LocalVideo import LocalVideo
 
-# --- CONFIGURATION & SEO ---
+# --- CONFIG ---
 LINK = "https://link-center.net/2645038/VuBhMuTSWyaC"
 PEXELS_API = os.getenv('PEXELS_API_KEY')
-IG_SESSION = os.getenv('INSTAGRAM_SESSION_ID')
-PINTEREST_TOKEN = os.getenv('PINTEREST_TOKEN')
+# For Instagram: Use your actual credentials in GitHub Secrets
+IG_USER = os.getenv('INSTAGRAM_USERNAME') 
+IG_PASS = os.getenv('INSTAGRAM_PASSWORD')
 
-# Viral Content Strategy: High-engagement scripts
 SCRIPTS = [
     "Stop scrolling! You can get a hundred dollar steam card right now. Check the link in my bio.",
     "Gaming just got cheaper. I found a way to get free steam credit instantly. Link in my bio to try it.",
@@ -28,70 +28,61 @@ SCRIPTS = [
 ]
 
 async def create_trending_video():
-    print("🎬 Fetching 4K Realistic Gaming Visuals...")
+    print("🎬 Fetching 4K Gaming Visuals...")
     headers = {"Authorization": PEXELS_API}
-    query = random.choice(['gaming', 'pc gaming', 'ps5 gameplay', 'cyberpunk 2077'])
+    query = random.choice(['gaming', 'ps5 gameplay', 'pc gaming'])
     url = f"https://api.pexels.com/videos/search?query={query}&per_page=40"
-    
     res = requests.get(url, headers=headers).json()
     video_url = random.choice(res['videos'])['video_files'][0]['link']
     
     with open("raw.mp4", 'wb') as f:
         f.write(requests.get(video_url).content)
 
-    print("🎙️ Generating Realistic AI Voiceover...")
+    print("🎙️ Generating AI Voice...")
     text = random.choice(SCRIPTS)
-    communicate = edge_tts.Communicate(text, "en-US-GuyNeural")
-    await communicate.save("voice.mp3")
+    await edge_tts.Communicate(text, "en-US-GuyNeural").save("voice.mp3")
 
     print("✂️ Mastering 15s Vertical Video...")
-    clip = VideoFileClip("raw.mp4").subclip(0, 15)
-    # Target 9:16 aspect ratio for Shorts/Reels/Pins
-    clip = clip.resize(height=1920).crop(x_center=540, width=1080)
-    
-    voice = AudioFileClip("voice.mp3")
-    final = clip.set_audio(voice)
+    clip = VideoFileClip("raw.mp4").subclip(0, 15).resize(height=1920).crop(x_center=540, width=1080)
+    final = clip.set_audio(AudioFileClip("voice.mp3"))
     final.write_videofile("final.mp4", fps=30, codec="libx264", audio_codec="aac")
 
 def post_to_youtube():
     try:
         print("📺 Uploading to YouTube Shorts...")
         channel = Channel()
-        # Uses the files you uploaded to GitHub
         channel.login("client_secrets.json", "credentials.storage")
         
         video = LocalVideo(file_path="final.mp4")
         video.set_title(f"How to get $100 Steam Credit FREE {random.randint(2025, 2026)}")
-        video.set_description(f"GET YOURS HERE: {LINK}\n#gaming #shorts #free #steam")
-        video.set_category("Gaming")
-        video.set_keywords(["gaming", "shorts", "free", "steam", "money"])
+        video.set_description(f"GET YOURS HERE: {LINK}\n#gaming #shorts #free")
+        video.set_category(20) # Fixed: 20 is the ID for Gaming
         
-        channel.upload_video(video)
-        print("✅ YouTube Success")
-    except Exception as e:
-        print(f"❌ YouTube Error: {e}")
+        video_info = channel.upload_video(video)
+        video_id = video_info.id
+        print(f"✅ YouTube Success: {video_id}")
+
+        # Post Pinned Comment
+        comment_text = f"🎁 CLAIM YOUR $100 GIFT CARD HERE ➡️ {LINK} (Limited Time!)"
+        channel.comment_on_video(video_id, comment_text)
+        print("📌 Comment Pinned!")
+    except Exception as e: print(f"❌ YouTube Error: {e}")
 
 def post_to_instagram():
     try:
-        print("📲 Posting to Instagram Reels...")
+        print("📲 Logging into Instagram...")
         cl = Client()
-        cl.set_settings({"sessionid": IG_SESSION})
-        caption = f"FREE $100 STEAM CREDIT! 🚀 Claim here: {LINK} #gaming #rewards #reels"
+        # Direct login using Username and Password
+        cl.login(IG_USER, IG_PASS)
+        caption = f"FREE $100 STEAM CREDIT! 🚀 Claim here: {LINK} #gaming #rewards"
         cl.video_upload("final.mp4", caption=caption)
         print("✅ Instagram Success")
-    except Exception as e:
-        print(f"❌ Instagram Error: {e}")
+    except Exception as e: print(f"❌ Instagram Error: {e}")
 
-def post_to_pinterest():
-    # Placeholder for Pinterest API integration
-    print("📌 Pinterest Hub: Post triggered for scheduling.")
-
-async def run_engine():
+async def main():
     await create_trending_video()
     post_to_youtube()
     post_to_instagram()
-    post_to_pinterest()
 
 if __name__ == "__main__":
-    asyncio.run(run_engine())
-
+    asyncio.run(main())
