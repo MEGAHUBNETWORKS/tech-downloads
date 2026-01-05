@@ -21,10 +21,9 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
           
-      - name: Run Bot
+            - name: Run Bot
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
           INSTAGRAM_SESSION_ID: ${{ secrets.INSTAGRAM_SESSION_ID }}
-          PINTEREST_TOKEN: ${{ secrets.PINTEREST_TOKEN }}
-        run: python bot.py
+          run: python bot.py
 
