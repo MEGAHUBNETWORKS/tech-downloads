@@ -3,4 +3,5 @@ instagrapi
 moviepy
 Pillow
 edge-tts
+simple-youtube-api
 
