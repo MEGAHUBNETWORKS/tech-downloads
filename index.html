@@ -132,18 +132,3 @@
     </script>
 </body>
 </html>
-    <script>
-        // Fake Reward Notifications Script
-        const users = ["Alex_Gamer", "SaraTech", "KingCrypto", "RewardsMaster", "User882", "M_Gaming"];
-        const rewards = ["$50 PSN Card", "Free Fire Diamonds", "iPhone 15 Verification", "$100 PayPal", "Steam Key"];
-        
-        setInterval(() => {
-            const notif = document.getElementById('notification');
-            document.getElementById('notif-user').innerText = users[Math.floor(Math.random()*users.length)] + " just verified!";
-            notif.classList.remove('hidden');
-            setTimeout(() => notif.classList.add('hidden'), 5000);
-        }, 15000);
-    </script>
-
-</body>
-</html>
