@@ -7,51 +7,60 @@ from instagrapi import Client
 from moviepy.editor import VideoFileClip, AudioFileClip
 
 # --- CONFIG ---
+PEXELS_API = os.getenv('PEXELS_API_KEY')
+IG_SESSION = os.getenv('INSTAGRAM_SESSION_ID')
 LINK = "https://link-center.net/2645038/VuBhMuTSWyaC"
 CAPTION = f"FREE $100 STEAM CREDIT! 🚀 Claim here: {LINK} #gaming #rewards"
 
 async def create_video():
-    # 1. GET 4K GAMING VIDEO
-    headers = {"Authorization": os.getenv('PEXELS_API_KEY')}
-    res = requests.get("https://api.pexels.com/videos/search?query=gaming&per_page=15", headers=headers).json()
-    v_url = random.choice(res['videos'])['video_files'][0]['link']
-    with open("video.mp4", 'wb') as f: f.write(requests.get(v_url).content)
+    print("🎥 Fetching video from Pexels...")
+    headers = {"Authorization": PEXELS_API}
+    # Added a check to see if API key exists
+    if not PEXELS_API:
+        print("❌ ERROR: PEXELS_API_KEY is missing in GitHub Secrets!")
+        return False
 
-    # 2. VOICE OVER
+    url = "https://api.pexels.com/videos/search?query=gaming&per_page=15"
+    response = requests.get(url, headers=headers)
+    res = response.json()
+
+    if 'videos' not in res:
+        print(f"❌ PEXELS API ERROR: {res}")
+        return False
+
+    video_data = random.choice(res['videos'])
+    video_url = video_data['video_files'][0]['link']
+    
+    print(f"📥 Downloading: {video_url}")
+    with open("video.mp4", 'wb') as f:
+        f.write(requests.get(video_url).content)
+
+    print("🎙️ Generating Voiceover...")
     txt = "Stop scrolling! Get a 100 dollar steam card for free at Rewards Hub. Link in bio!"
     await edge_tts.Communicate(txt, "en-US-GuyNeural").save("voice.mp3")
 
-    # 3. EDIT (Finalize for Shorts/Reels)
-    clip = VideoFileClip("video.mp4").subclip(0, 12).resize(height=1920).crop(x_center=540, width=1080)
+    print("🎬 Editing Video...")
+    clip = VideoFileClip("video.mp4").subclip(0, 10).resize(height=1920).crop(x_center=540, width=1080)
     clip = clip.set_audio(AudioFileClip("voice.mp3"))
-    clip.write_videofile("final.mp4", fps=24, codec="libx264")
-
-# --- UPLOAD ENGINES ---
+    clip.write_videofile("final.mp4", fps=24, codec="libx264", audio_codec="aac")
+    return True
 
 def post_instagram():
+    if not os.path.exists("final.mp4"):
+        return
     try:
+        print("📲 Posting to Instagram...")
         cl = Client()
-        cl.set_settings({"sessionid": os.getenv('INSTAGRAM_SESSION_ID')})
+        cl.set_settings({"sessionid": IG_SESSION})
         cl.video_upload("final.mp4", caption=CAPTION)
-        print("✅ Instagram Posted")
-    except Exception as e: print(f"❌ IG Error: {e}")
+        print("✅ Instagram Posted!")
+    except Exception as e:
+        print(f"❌ Instagram Error: {e}")
 
-def post_pinterest():
-    try:
-        # Pinterest API logic
-        url = "https://api.pinterest.com/v5/pins"
-        headers = {"Authorization": f"Bearer {os.getenv('PINTEREST_TOKEN')}", "Content-Type": "application/json"}
-        # Note: Pinterest requires a hosted video URL or specialized upload, 
-        # for now we post the Link Image to drive traffic.
-        print("✅ Pinterest Pin logic triggered")
-    except Exception as e: print(f"❌ Pinterest Error: {e}")
-
-def post_youtube():
-    # This uses the YouTube Data API v3
-    print("✅ YouTube Shorts upload triggered")
+async def main():
+    success = await create_video()
+    if success:
+        post_instagram()
 
 if __name__ == "__main__":
-    asyncio.run(create_video())
-    post_instagram()
-    post_pinterest()
-    post_youtube()
+    asyncio.run(main())
