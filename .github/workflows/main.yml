@@ -1,0 +1,28 @@
+name: 24-7 Money Machine
+on:
+  schedule:
+    - cron: '0 */4 * * *' # Runs every 4 hours
+  workflow_dispatch: # Allows you to start it manually
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Bot
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          INSTAGRAM_SESSION_ID: ${{ secrets.INSTAGRAM_SESSION_ID }}
+        run: python bot.py
+        
