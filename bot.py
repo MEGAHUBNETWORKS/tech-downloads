@@ -4,7 +4,8 @@ from moviepy import VideoFileClip, AudioFileClip, CompositeAudioClip, TextClip, 
 import moviepy.video.fx as vfx
 from simple_youtube_api.Channel import Channel
 from simple_youtube_api.LocalVideo import LocalVideo
-
+# --- SUPPRESS WARNINGS ---
+warnings.filterwarnings("ignore", category=FutureWarning)
 # --- MASTER CONFIG ---
 # Replace with your actual Pexels API Key
 PEXELS_API = os.getenv('PEXELS_API_KEY') 
