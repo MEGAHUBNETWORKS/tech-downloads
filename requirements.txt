@@ -1,6 +1,6 @@
-requests
-moviepy
+moviepy>=2.0.0
 edge-tts
+requests
 Pillow
 proglog
 simple-youtube-api
