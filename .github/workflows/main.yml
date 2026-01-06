@@ -1,7 +1,6 @@
 name: Max Money Viral Engine
 on:
   schedule:
-    # Runs every 4 hours to maximize viral chances
     - cron: '0 */4 * * *'
   workflow_dispatch:
 
@@ -20,22 +19,16 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          # Install fonts and video tools
           sudo apt-get install -y imagemagick fonts-liberation
-          # CRITICAL: Fix ImageMagick security policy for TextClips
           sudo sed -i 's/none/read,write/g' /etc/ImageMagick-6/policy.xml
 
       - name: Install Python Dependencies
         run: |
           pip install --upgrade pip
-          # Installs MoviePy, AI Voice, and YouTube Manager tools
           pip install moviepy>=2.0.0 edge-tts requests Pillow simple-youtube-api google-auth-oauthlib
 
-      - name: Run AI Content & Upload Engine
+      - name: Run Engine
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
-          # If you use secrets for login, they go here
-          YT_EMAIL: ${{ secrets.YT_EMAIL }}
-          YT_PASSWORD: ${{ secrets.YT_PASSWORD }}
         run: python bot.py
 
