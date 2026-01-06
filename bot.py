@@ -1,5 +1,5 @@
 import os, requests, asyncio, random, edge_tts
-from moviepy.editor import VideoFileClip, AudioFileClip, vfx, CompositeAudioClip, TextClip, ColorClip, CompositeVideoClip
+from moviepy import VideoFileClip, AudioFileClip, vfx, CompositeAudioClip, TextClip, ColorClip, CompositeVideoClip
 from moviepy.video.fx.all import crop
 
 # --- SETTINGS ---
