@@ -1,8 +1,6 @@
 name: Max Money Viral Engine
-
 on:
   schedule:
-    # Runs 6 times a day to maximize reach across timezones
     - cron: '0 */4 * * *'
   workflow_dispatch:
 
@@ -21,25 +19,17 @@ jobs:
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y imagemagick
-          # Fix for ImageMagick security policy that blocks TextClip
+          sudo apt-get install -y imagemagick fonts-dejavu-core fonts-liberation
+          # Fix ImageMagick Policy
           sudo sed -i 's/none/read,write/g' /etc/ImageMagick-6/policy.xml
 
       - name: Install Python Dependencies
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install moviepy>=2.0.0 edge-tts requests Pillow
 
       - name: Run AI Engine
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
-          # Ensure you have your client_secrets.json in your repo for this
         run: python bot.py
-
-      - name: Keep Alive (Prevents GitHub from pausing the action)
-        run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          git commit --allow-empty -m "Auto-Update: Viral Engine Running"
-          git push
 
