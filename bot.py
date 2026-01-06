@@ -1,74 +1,96 @@
 import os, requests, asyncio, random, edge_tts
-from moviepy import VideoFileClip, AudioFileClip, vfx, CompositeAudioClip, TextClip, ColorClip, CompositeVideoClip
-from moviepy.video.fx.all import crop
+from moviepy import VideoFileClip, AudioFileClip, CompositeAudioClip, TextClip, ColorClip, CompositeVideoClip
+import moviepy.video.fx as vfx
 
 # --- SETTINGS ---
 PEXELS_API = os.getenv('PEXELS_API_KEY')
+LINK = "https://link-center.net/2645038/VuBhMuTSWyaC"
 
-def generate_emotional_script():
-    # Scripts designed to trigger high emotional response (Curiosity/Urgency)
+def generate_viral_script():
+    """Generates a high-retention script to trigger curiosity and FOMO."""
     hooks = [
-        "Stop what you're doing and look at this. 🛑",
-        "They tried to hide this, but I'm showing you anyway. 🤫",
-        "This is the one secret that actually changed my life. 💎",
-        "You won't believe what happens at the end of this video. ✨"
+        "Stop scrolling! This secret is about to expire. 🛑",
+        "The 1% don't want you to know about this link. 🤫",
+        "I found a glitch that actually pays out. Look! 💎",
+        "Why is nobody talking about this free method? ✨"
     ]
     stories = [
-        "I was tired of being broke until I found this hidden link.",
-        "Everyone is gatekeeping this, but I want us all to win.",
-        "I tested this for 24 hours and the results are insane."
+        "I just used this to grab my hundred dollar card in seconds.",
+        "It's finally back online after being down for weeks.",
+        "I tested this live and it worked on the first try."
     ]
-    cta = "Check the link in my description before it gets taken down! 🚀"
-    
+    cta = f"Click the link in the description before it's gone! 🚀"
     return f"{random.choice(hooks)} {random.choice(stories)} {random.choice(cta)}"
 
 async def create_viral_video():
-    print("🔥 Analyzing Trends & Fetching 4K Clips...")
+    print("🎬 Step 1: Fetching Trending 4K Footage...")
     headers = {"Authorization": PEXELS_API}
-    query = random.choice(['extreme sports', 'luxury life', 'satisfying art', 'storm chasing'])
+    query = random.choice(['extreme sports', 'luxury lifestyle', 'abstract satisfying', 'deep sea'])
     url = f"https://api.pexels.com/videos/search?query={query}&per_page=15&orientation=portrait"
-    res = requests.get(url, headers=headers).json()
-    video_url = random.choice(res['videos'])['video_files'][0]['link']
     
+    try:
+        res = requests.get(url, headers=headers).json()
+        video_url = random.choice(res['videos'])['video_files'][0]['link']
+    except Exception as e:
+        print(f"Error fetching Pexels: {e}")
+        return
+
     with open("raw.mp4", 'wb') as f: f.write(requests.get(video_url).content)
 
-    print("🎙️ Generating AI Voiceover...")
-    script = generate_emotional_script()
-    await edge_tts.Communicate(script, "en-US-GuyNeural", rate="+22%").save("voice.mp3")
+    print("🎙️ Step 2: Generating AI Voiceover...")
+    script = generate_viral_script()
+    voice_choice = random.choice(["en-US-GuyNeural", "en-GB-SoniaNeural"])
+    await edge_tts.Communicate(script, voice_choice, rate="+25%").save("voice.mp3")
 
-    print("🎬 Starting Pro-Level Editing...")
-    clip = VideoFileClip("raw.mp4").subclip(0, 12).resize(height=1920)
-    # Ensure perfect 9:16 crop for mobile
-    clip = crop(clip, width=1080, height=1920, x_center=clip.w/2, y_center=clip.h/2)
-
-    # --- EFFECT 1: DYNAMIC SUBTITLES (High Retention) ---
-    subs = TextClip(script, fontsize=80, color='yellow', font='Arial-Bold', 
-                    method='caption', size=(900, None), stroke_color='black', stroke_width=2)
-    subs = subs.set_duration(clip.duration).set_position(('center', 1300))
-
-    # --- EFFECT 2: PROGRESS BAR (The Viral Secret) ---
-    # This bar moves across the bottom as the video plays
-    bar_bg = ColorClip(size=(1080, 10), color=(50, 50, 50)).set_duration(clip.duration).set_position(('center', 1880))
-    def progress_bar_factory(t):
-        w = int(1080 * (t / clip.duration))
-        return ColorClip(size=(max(1, w), 10), color=(0, 212, 255)).set_duration(1/30)
+    print("🎨 Step 3: High-End Rendering (FX & Progress Bar)...")
+    # Load and Prepare Clip
+    clip = VideoFileClip("raw.mp4").subclipped(0, 12)
     
-    progress_bar = ColorClip(size=(1, 10), color=(0, 212, 255)).set_duration(clip.duration).set_position((0, 1880))
-    # Note: For a moving bar, we use an Animated clip or updated positioning. 
-    # Simplified here for stability.
+    # Smart Crop for 9:16 Shorts format
+    target_aspect = 1080 / 1920
+    if (clip.w / clip.h) > target_aspect:
+        # Landscape to Portrait
+        new_w = clip.h * target_aspect
+        clip = clip.cropped(x_center=clip.w/2, width=new_w)
+    clip = clip.resized(height=1920)
 
-    # --- AUDIO: HYPE MUSIC ---
-    voice = AudioFileClip("voice.mp3")
-    # Low volume intense background music
+    # Apply Color Boost for 'Pop' effect
+    clip = clip.with_effects([vfx.Colorx(1.2)])
+
+    # Add Subtitles (Middle-Bottom)
+    subs = TextClip(
+        text=script, 
+        font_size=70, 
+        color='yellow', 
+        font='Arial-Bold', 
+        method='caption', 
+        size=(900, None)
+    ).with_duration(clip.duration).with_position(('center', 1300))
+
+    # Add Progress Bar (Bottom)
+    # Background bar
+    bar_bg = ColorClip(size=(1080, 12), color=(40, 40, 40)).with_duration(clip.duration).with_position(('center', 1880))
+    # Moving progress bar
+    def make_progress_bar(t):
+        w = int(1080 * (t / clip.duration))
+        return ColorClip(size=(max(1, w), 12), color=(0, 212, 255))
+
+    progress_bar = clip.fl(lambda gf, t: CompositeVideoClip([gf(t), make_progress_bar(t).with_position((0, 1880))]))
+
+    # Audio Setup
+    voice_audio = AudioFileClip("voice.mp3")
     music_url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
     with open("bg.mp3", 'wb') as f: f.write(requests.get(music_url).content)
-    bg = AudioFileClip("bg.mp3").volumex(0.15).set_duration(voice.duration)
+    bg_music = AudioFileClip("bg.mp3").with_volume_scaled(0.15).with_duration(voice_audio.duration)
 
-    final = CompositeVideoClip([clip, subs, bar_bg, progress_bar])
-    final = final.set_audio(CompositeAudioClip([voice, bg]))
+    final_audio = CompositeAudioClip([voice_audio, bg_music])
     
-    # Render with High Bitrate for "Suggested Video" algorithm
-    final.write_videofile("viral_short.mp4", fps=30, bitrate="8000k", codec="libx264")
+    # Final Composition
+    final_video = CompositeVideoClip([progress_bar, subs, bar_bg])
+    final_video = final_video.with_audio(final_audio)
+
+    print("🚀 Step 4: Finalizing Viral Export...")
+    final_video.write_videofile("final.mp4", fps=30, bitrate="8000k", codec="libx264", audio_codec="aac")
 
 if __name__ == "__main__":
     asyncio.run(create_viral_video())
