@@ -4,83 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer-when-downgrade">
-    <title>Multi-Stream PRO | 4000h Watch-Time Engine</title>
+    <title>Multi-Stream PRO | Max Performance</title>
     
     <script src="https://pl28402872.effectivegatecpm.com/4a/0d/c2/4a0dc29afb5cd2eeb1933d801b116bf3.js"></script>
     <script src="https://pl28402869.effectivegatecpm.com/fc/7f/e7/fc7fe77f75716652e387c0d40dc253a6.js"></script>
 
     <style>
         :root { --primary: #00d4ff; --bg: #020617; --card: #0f172a; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .ip-bar { background: rgba(0, 212, 255, 0.1); border: 1px solid var(--primary); border-radius: 10px; padding: 10px; display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 20px; }
-        .panel { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #1e293b; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #334155; background: #020617; color: #fff; margin-bottom: 15px; box-sizing: border-box; }
-        .btn-launch { background: linear-gradient(90deg, #00d4ff, #008fb3); color: #000; padding: 18px; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; text-transform: uppercase; width: 100%; margin-bottom: 10px; }
-        #video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 25px; }
-        .vid-box { background: #000; border-radius: 12px; overflow: hidden; border: 1px solid #334155; aspect-ratio: 16/9; }
+        body { font-family: sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 15px; }
+        .panel { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #1e293b; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        input { width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #334155; background: #000; color: #fff; margin-bottom: 10px; box-sizing: border-box; }
+        .btn-main { background: #00d4ff; color: #000; width: 100%; padding: 18px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
+        #video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-top: 20px; }
+        .vid-box { background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #334155; aspect-ratio: 16/9; }
         iframe { width: 100%; height: 100%; border: none; }
-        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
-        .modal-content { background: var(--card); margin: 20% auto; padding: 25px; border-radius: 15px; width: 80%; max-width: 400px; border: 1px solid var(--primary); text-align: center; }
-        footer { text-align: center; padding: 30px; color: #64748b; font-size: 0.8rem; }
+        footer { text-align: center; margin-top: 30px; color: #64748b; font-size: 0.8rem; }
     </style>
-
-    <script>
-        // ALL FUNCTIONS LOAD FIRST TO PREVENT "NOT WORKING" ERRORS
-        function startTabs() {
-            const linkInput = document.getElementById('youtubeLink').value;
-            const quality = document.getElementById('qualitySet').value;
-            const grid = document.getElementById('video-grid');
-            
-            if(!linkInput) { alert("Please paste a link first!"); return; }
-
-            let videoId = '';
-            if(linkInput.includes('v=')) videoId = linkInput.split('v=')[1].split('&')[0];
-            else if(linkInput.includes('youtu.be/')) videoId = linkInput.split('youtu.be/')[1].split('?')[0];
-            else if(linkInput.includes('shorts/')) videoId = linkInput.split('shorts/')[1].split('?')[0];
-
-            if(!videoId) { alert("Invalid YouTube Link!"); return; }
-
-            grid.innerHTML = '';
-            const finalUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&playlist=${videoId}&loop=1&enablejsapi=1&vq=${quality}`;
-
-            for(let i=0; i<10; i++) {
-                setTimeout(() => {
-                    const box = document.createElement('div');
-                    box.className = 'vid-box';
-                    const frame = document.createElement('iframe');
-                    frame.src = finalUrl;
-                    frame.setAttribute('allow', 'autoplay; encrypted-media');
-                    box.appendChild(frame);
-                    grid.appendChild(box);
-                }, i * 1000);
-            }
-        }
-
-        function shareLink() {
-            const myLink = "https://link-center.net/2645038/VuBhMuTSWyaC";
-            navigator.clipboard.writeText(myLink).then(() => {
-                alert("Share Link Copied! Send this to your groups.");
-                window.open(myLink, '_blank');
-            });
-        }
-
-        function openMod(id) { document.getElementById(id).style.display = 'block'; }
-        function closeMod(id) { document.getElementById(id).style.display = 'none'; }
-    </script>
 </head>
 <body>
 
-<div class="container">
-    <header style="text-align:center; padding: 20px 0;">
-        <h1 style="color:var(--primary); margin:0;">Multi-Stream PRO</h1>
-        <p style="opacity:0.6;">Stealth Growth Engine</p>
-    </header>
-
-    <div class="ip-bar">
-        <span>📡 IP: <span id="user-ip">...</span></span>
-        <span style="color:#22c55e">● SYSTEM READY</span>
-    </div>
+    <h2 style="text-align:center; color:var(--primary);">Multi-Stream PRO</h2>
 
     <div style="text-align:center; margin-bottom:15px;">
         <script>atOptions={'key':'031f6b97d186a16274858038b4e2d98a','format':'iframe','height':90,'width':728,'params':{}};</script>
@@ -88,22 +31,68 @@
     </div>
 
     <div class="panel">
-        <input type="text" id="youtubeLink" placeholder="Paste Video Link Here...">
+        <input type="text" id="vID" placeholder="Paste YouTube Link (e.g. watch?v=...)">
         
-        <div style="margin-bottom:15px; font-size: 0.8rem;">
+        <div style="margin-bottom:15px;">
             Quality: 
-            <select id="qualitySet" style="background:#000; color:var(--primary); border:1px solid var(--primary);">
+            <select id="vQual" style="background:#000; color:var(--primary); border:1px solid var(--primary); padding:5px; border-radius:5px;">
                 <option value="small">Ultra Low (144p)</option>
                 <option value="medium" selected>Standard (360p)</option>
             </select>
         </div>
 
-        <button class="btn-launch" onclick="startTabs()">Launch 10 Stealth Tabs</button>
+        <button class="btn-main" onclick="
+            var val = document.getElementById('vID').value;
+            var q = document.getElementById('vQual').value;
+            var grid = document.getElementById('video-grid');
+            var id = '';
+            if(val.includes('v=')) id = val.split('v=')[1].split('&')[0];
+            else if(val.includes('youtu.be/')) id = val.split('youtu.be/')[1].split('?')[0];
+            else if(val.includes('shorts/')) id = val.split('shorts/')[1].split('?')[0];
+            
+            if(!id) { alert('Invalid Link!'); }
+            else {
+                grid.innerHTML = '';
+                var url = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&mute=1&playlist=' + id + '&loop=1&enablejsapi=1&vq=' + q;
+                for(var i=0; i<10; i++){
+                    (function(n){
+                        setTimeout(function(){
+                            var b = document.createElement('div');
+                            b.className = 'vid-box';
+                            var f = document.createElement('iframe');
+                            f.src = url;
+                            f.setAttribute('allow', 'autoplay; encrypted-media');
+                            b.appendChild(f);
+                            grid.appendChild(b);
+                        }, n * 1000);
+                    })(i);
+                }
+            }
+        ">LAUNCH 10 TABS</button>
         
         <div style="display:flex; gap:10px;">
-            <button onclick="window.open('https://www.effectivegatecpm.com/rvdy73duei?key=90ea42b18c679c723cbba319b46ca1ad')" style="flex:1; background:#f59e0b; padding:12px; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">🚀 Boost</button>
-            <button onclick="shareLink()" style="flex:1; background:#6366f1; color:#fff; padding:12px; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">🔗 Share</button>
+            <button onclick="window.open('https://www.effectivegatecpm.com/rvdy73duei?key=90ea42b18c679c723cbba319b46ca1ad')" style="flex:1; background:#f59e0b; padding:12px; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">🚀 BOOST</button>
+            <button onclick="
+                var link = 'https://link-center.net/2645038/VuBhMuTSWyaC';
+                navigator.clipboard.writeText(link);
+                alert('Share Link Copied!');
+                window.open(link, '_blank');
+            " style="flex:1; background:#6366f1; color:#fff; padding:12px; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">🔗 SHARE</button>
         </div>
+    </div>
+
+    <div id="video-grid"></div>
+
+    <div id="container-d501597fa1ca22d24bfcd67233d1f0f5" style="margin-top:20px;">
+        <script async="async" data-cfasync="false" src="https://pl28402873.effectivegatecpm.com/d501597fa1ca22d24bfcd67233d1f0f5/invoke.js"></script>
+    </div>
+
+    <footer>
+        <p>© 2026 Multi-Stream PRO | Stealth Mode Active</p>
+    </footer>
+
+</body>
+</html>
     </div>
 
     <div id="video-grid"></div>
