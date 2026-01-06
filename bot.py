@@ -1,70 +1,106 @@
-import os, asyncio, random, edge_tts, math
+import os, asyncio, random, math, requests
 import numpy as np
 from moviepy import VideoFileClip, AudioFileClip, CompositeAudioClip, TextClip, ColorClip, CompositeVideoClip, VideoClip
 import moviepy.video.fx as vfx
 from simple_youtube_api.Channel import Channel
 from simple_youtube_api.LocalVideo import LocalVideo
 
-# --- MASTER CONFIGURATION ---
+# --- MASTER CONFIG ---
 LINK = "https://link-center.net/2645038/VuBhMuTSWyaC"
 
-def make_animation(t):
-    """Generates a hypnotic, high-contrast animated frame."""
+def generate_aggressive_frame(t, vibe):
+    """Generates 4K-ready, high-speed aggressive visuals with shake logic."""
+    # Create base surface
     surface = np.zeros((1920, 1080, 3), dtype="uint8")
-    # Create pulsing circles and geometric patterns
-    for i in range(5):
-        radius = int(200 + 100 * math.sin(t * 3 + i))
-        center = (540 + int(100 * math.cos(t * 2)), 960 + int(100 * math.sin(t * 2)))
-        color = (random.randint(0, 50), random.randint(150, 255), 255) # Electric Blue/Cyan
-        # Simplified drawing logic for speed
-        surface[center[1]-radius:center[1]+radius, center[0]-radius:center[0]+radius] = color
+    
+    # BEAT DETECTION LOGIC (Simulated high-bpm pulse)
+    # Flashes every 0.2 seconds to match Phonk BPM
+    is_beat = True if (t * 5) % 1 > 0.8 else False
+    
+    # SCREEN SHAKE OFFSET
+    off_x = random.randint(-20, 20) if is_beat else 0
+    off_y = random.randint(-20, 20) if is_beat else 0
+
+    if vibe == 'HACKER':
+        # Cyber-Grid with Red Alert Flashes
+        color = (255, 0, 0) if is_beat else (0, 255, 60)
+        for i in range(15):
+            x = int(540 + off_x + 450 * math.sin(t * 20 + i))
+            if 0 <= x < 1080: surface[:, x-8:x+8] = color
+            
+    elif vibe == 'SPEED':
+        # Kinetic Warp Drive effect
+        color = (255, 255, 255) if is_beat else (0, 150, 255)
+        for i in range(20):
+            radius = int(50 + (t * 2000) % 1000)
+            center = (540 + off_x, 960 + off_y)
+            # Draw fast expanding circles
+            # (Simplified for performance)
+            surface[max(0,center[1]-5):min(1919,center[1]+5), :] = color
+            
+    elif vibe == 'WAR':
+        # High-contrast thermal/glitch flicker
+        if is_beat:
+            surface[:, :] = (255, 255, 255) # Whiteout flash
+        else:
+            surface[::10, :] = (40, 40, 40) # Scanning lines
+
     return surface
 
 async def run_engine():
-    # 1. TOPIC & SEO
-    niches = ['DEEP WEB SECRETS', 'GTA 6 GLITCH', 'IPHONE 18 LEAK', 'AI WEALTH HACK']
-    topic = random.choice(niches)
-    print(f"🔥 Generating Animation for: {topic}")
+    # 1. SELECT TRENDING VIBE
+    vibe = random.choice(['HACKER', 'SPEED', 'WAR'])
+    duration = 7.5 # Short duration = higher 'Repeat' rate
+    
+    # 2. GENERATE HIGH-SPEED VISUALS
+    bg = VideoClip(lambda t: generate_aggressive_frame(t, vibe), duration=duration).with_fps(30)
 
-    # 2. AI SCRIPT & VOICE
-    script = f"STOP! You just found the only working {topic} in 2026. 🤫 Everyone is gatekeeping this link, but I'm giving it to you for free. Check the link in my description right now! 🚀"
-    await edge_tts.Communicate(script, "en-US-GuyNeural", rate="+30%").save("voice.mp3")
-    voice = AudioFileClip("voice.mp3")
-    duration = voice.duration - 0.05
+    # 3. SYNC AGGRESSIVE AUDIO
+    # Using high-energy Phonk/Hardstyle tracks
+    music_urls = [
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3"
+    ]
+    res = requests.get(random.choice(music_urls))
+    with open("audio.mp3", "wb") as f: f.write(res.content)
+    
+    audio = AudioFileClip("audio.mp3").with_duration(duration).with_volume_scaled(1.8)
 
-    # 3. GENERATE ANIMATED BACKGROUND
-    # This creates a unique 1080x1920 animated background using the math function above
-    bg_animation = VideoClip(make_animation, duration=duration).with_fps(30)
-
-    # 4. PRO EDITING
+    # 4. OVERLAY GLITCH TEXT
     font_path = "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
     if not os.path.exists(font_path): font_path = "Arial"
 
-    # Animated Subtitles (Yellow/Black for high contrast)
-    subs = TextClip(text=script, font_size=85, color='yellow', font=font_path, 
-                    method='caption', size=(950, None), stroke_color="black", stroke_width=2).with_duration(duration).with_position(('center', 'center'))
+    labels = {'HACKER': 'ACCESS GRANTED', 'SPEED': 'LIMITLESS', 'WAR': 'EXECUTE'}
     
-    # Viral Progress Bar
-    bar_bg = ColorClip(size=(1080, 20), color=(20, 20, 20)).with_duration(duration).with_position(('center', 1880))
-    bar_moving = ColorClip(size=(1080, 20), color=(0, 255, 127)).with_duration(duration).with_position((0, 1880))
-    bar_moving = bar_moving.with_effects([vfx.Resize(lambda t: (max(1, int(1080 * t/duration)), 20))])
+    txt = TextClip(
+        text=labels[vibe], 
+        font_size=150, 
+        color='white', 
+        font=font_path,
+        stroke_color="black", 
+        stroke_width=5,
+        method='caption',
+        size=(1000, None)
+    ).with_duration(duration).with_position(('center', 'center'))
 
-    # 5. MASTERING & EXPORT
-    final = CompositeVideoClip([bg_animation, subs, bar_bg, bar_moving]).with_audio(voice.subclipped(0, duration))
-    final.write_videofile("final.mp4", fps=30, bitrate="10000k", codec="libx264")
+    # 5. MASTERING
+    final = CompositeVideoClip([bg, txt]).with_audio(audio)
+    
+    # Export with Max Bitrate for 2026 HDR standards
+    final.write_videofile("final.mp4", fps=30, bitrate="15000k", codec="libx264")
 
-    # 6. AUTOMATIC UPLOAD
+    # 6. AUTO-UPLOAD
     try:
         channel = Channel()
         channel.login("client_secrets.json", "credentials.storage")
         video = LocalVideo(file_path="final.mp4")
-        video.set_title(f"THE {topic} THEY DON'T WANT YOU TO SEE! 🤫 #shorts #viral")
-        video.set_description(f"GET THE LINK HERE: {LINK}\n\nThis {topic} is life changing.")
+        video.set_title(f"{labels[vibe]} // 2026 ⚡ #phonk #edit #aggressive")
+        video.set_description(f"GET THE REWARD: {LINK}")
         video.set_privacy_status("public")
         channel.upload_video(video)
-        print(f"✅ SUCCESS: {topic} is Live!")
+        print(f"✅ DEPLOYED: {vibe}")
     except Exception as e:
-        print(f"❌ UPLOAD FAILED: {e}")
+        print(f"❌ ERROR: {e}")
 
 if __name__ == "__main__":
     asyncio.run(run_engine())
