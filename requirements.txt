@@ -1,6 +1,6 @@
 requests
-instagrapi
 moviepy
-Pillow
 edge-tts
+Pillow
+proglog
 simple-youtube-api
