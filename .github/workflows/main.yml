@@ -1,7 +1,8 @@
 name: Max Money Viral Engine
+
 on:
   schedule:
-    - cron: '0 */4 * * *'
+    - cron: '0 */6 * * *' # Restarts every 6 hours to stay 24/7
   workflow_dispatch:
 
 jobs:
@@ -9,23 +10,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11' # Upgraded to 3.11 to stop version warnings
 
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y imagemagick fonts-liberation
-          sudo sed -i 's/none/read,write/g' /etc/ImageMagick-6/policy.xml
+          sudo apt-get install -y ffmpeg fonts-liberation
 
       - name: Install Python Dependencies
         run: |
-          pip install --upgrade pip
-          pip install moviepy>=2.0.0 edge-tts requests Pillow simple-youtube-api google-auth-oauthlib
+          python -m pip install --upgrade pip
+          pip install wheel setuptools
+          pip install moviepy==2.0.0.dev2 numpy requests google-api-python-client google-auth-oauthlib google-auth-httplib2 Pillow
+          pip install git+https://github.com/p_m_dev/simple-youtube-api.git
 
       - name: Run Engine
         env:
