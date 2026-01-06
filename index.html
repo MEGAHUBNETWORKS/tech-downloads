@@ -3,107 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Stream Pro | 100% Safe & Unlimited</title>
+    <title>Multi-Stream Pro | Subscriber & Watch-Time Engine</title>
     
     <script src="https://pl28402872.effectivegatecpm.com/4a/0d/c2/4a0dc29afb5cd2eeb1933d801b116bf3.js"></script>
     <script src="https://pl28402869.effectivegatecpm.com/fc/7f/e7/fc7fe77f75716652e387c0d40dc253a6.js"></script>
 
     <style>
-        :root { --primary: #00d4ff; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-        header { text-align: center; padding: 20px 0; }
-        .status-badge { background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        :root { --primary: #00d4ff; --bg: #020617; --card: #0f172a; --accent: #38bdf8; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: #f1f5f9; margin: 0; overflow-x: hidden; background-image: radial-gradient(circle at 50% 50%, #111827 0%, #020617 100%); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         
-        /* AD SPACES */
-        .ad-top { display: flex; justify-content: center; margin-bottom: 20px; }
-        .ad-sidebar { position: fixed; right: 10px; top: 150px; width: 160px; z-index: 100; }
+        /* Effects */
+        .glow-text { text-shadow: 0 0 10px var(--primary); }
+        header { text-align: center; padding: 30px 0; border-bottom: 1px solid #1e293b; margin-bottom: 30px; }
 
-        /* UI ELEMENTS */
-        .control-panel { background: var(--card); padding: 25px; border-radius: 16px; border: 1px solid #334155; margin-bottom: 30px; }
-        input { width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; margin-bottom: 15px; box-sizing: border-box; }
-        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; min-width: 150px; }
-        .btn-start { background: var(--primary); color: #000; }
-        .btn-share { background: #6366f1; color: #fff; }
-        .btn-smart { background: #f59e0b; color: #000; }
+        /* Lock System */
+        #locker { background: rgba(15, 23, 42, 0.95); padding: 40px; border-radius: 20px; border: 2px solid var(--primary); text-align: center; margin-bottom: 30px; box-shadow: 0 0 30px rgba(0,212,255,0.2); }
+        .unlock-btn { background: linear-gradient(90deg, #ef4444, #b91c1c); color: white; padding: 15px 30px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; font-size: 1.2rem; }
 
-        /* VIDEO GRID - BIG SPACE */
-        #video-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-            gap: 20px; 
-            margin-top: 20px;
-            min-height: 500px;
-        }
-        .frame-container { background: #000; border-radius: 10px; border: 1px solid #334155; overflow: hidden; position: relative; }
-        iframe { width: 100%; aspect-ratio: 16/9; border: none; }
+        /* Control Panel */
+        .main-panel { display: none; background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid #1e293b; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        footer { text-align: center; margin-top: 50px; padding: 30px; border-top: 1px solid #334155; }
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
-        .modal-content { background: var(--card); margin: 10% auto; padding: 30px; border-radius: 15px; width: 85%; max-width: 500px; border: 1px solid var(--primary); }
+        input { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid #334155; background: #020617; color: #fff; margin-bottom: 20px; box-sizing: border-box; }
+        
+        .grid-btn { background: var(--primary); color: #000; padding: 18px; width: 100%; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+        
+        /* Video Area */
+        #video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0; }
+        .vid-box { background: #000; border-radius: 12px; border: 1px solid #334155; overflow: hidden; aspect-ratio: 16/9; }
+        iframe { width: 100%; height: 100%; border: none; }
 
-        @media (max-width: 768px) { .ad-sidebar { display: none; } }
+        /* Ads & Footer */
+        .ad-row { display: flex; justify-content: center; margin: 25px 0; min-height: 90px; }
+        .tutorial-box { background: rgba(56, 189, 248, 0.1); border-left: 5px solid var(--primary); padding: 20px; border-radius: 8px; margin-top: 30px; font-size: 0.9rem; }
+        
+        footer { text-align: center; padding: 40px; border-top: 1px solid #1e293b; color: #64748b; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <div class="status-badge">● BYPASS ENGINE v4.0 ACTIVE</div>
-        <h1>Multi-Stream Pro</h1>
-        <p>Unlimited Lifetime Use • 100% Channel Protection</p>
+        <h1 class="glow-text">Multi-Stream <span style="color:white">PRO</span></h1>
+        <p>Verified Lifetime Watch-Time & Subscriber Engine</p>
     </header>
 
-    <div class="ad-top">
+    <div class="ad-row">
         <script>atOptions = {'key':'031f6b97d186a16274858038b4e2d98a','format':'iframe','height':90,'width':728,'params':{}};</script>
         <script src="https://www.highperformanceformat.com/031f6b97d186a16274858038b4e2d98a/invoke.js"></script>
     </div>
 
-    <div class="ad-sidebar">
-        <script>atOptions = {'key':'f654a19913a9f7980a87a1e23cfbdbd1','format':'iframe','height':300,'width':160,'params':{}};</script>
-        <script src="https://www.highperformanceformat.com/f654a19913a9f7980a87a1e23cfbdbd1/invoke.js"></script>
+    <div id="locker">
+        <h2 style="color:var(--primary)">🔓 TOOL LOCKED</h2>
+        <p>To access <b>100% Safe Watch-Time</b> and <b>Subscriber Boost</b>, you must verify you are human.</p>
+        <br>
+        <button class="unlock-btn" onclick="openSub()">1. SUBSCRIBE TO UNLOCK</button>
+        <p id="timer-text" style="display:none; margin-top:20px;">Verifying... <span id="count">15</span>s</p>
+        <br><br>
+        <button id="verify-btn" style="display:none; background:#22c55e; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;" onclick="verifyLink()">2. CLICK TO COMPLETE VERIFICATION</button>
     </div>
 
-    <div class="control-panel">
-        <input type="text" id="videoLink" placeholder="Paste Video Link Here (YouTube, Shorts, etc.)">
+    <div class="main-panel" id="main-tool">
+        <input type="text" id="targetLink" placeholder="Paste YouTube/Video URL Here...">
         
-        <div id="container-d501597fa1ca22d24bfcd67233d1f0f5">
+        <div class="ad-row">
             <script async="async" data-cfasync="false" src="https://pl28402873.effectivegatecpm.com/d501597fa1ca22d24bfcd67233d1f0f5/invoke.js"></script>
+            <div id="container-d501597fa1ca22d24bfcd67233d1f0f5"></div>
         </div>
 
-        <div class="btn-group">
-            <button class="btn-start" onclick="startTabs()">RUN 10 TABS</button>
-            <button class="btn-smart" onclick="window.open('https://www.effectivegatecpm.com/rvdy73duei?key=90ea42b18c679c723cbba319b46ca1ad')">OPTIMIZE SPEED</button>
-            <button class="btn-share" onclick="shareSite()">SHARE & EARN</button>
-        </div>
+        <button class="grid-btn" onclick="startEngine()">Launch 10 Stealth Tabs</button>
+        
+        <div id="video-grid"></div>
 
-        <div style="margin-top:15px; color:#94a3b8; font-size:0.9rem;">
-            Auto-Loop: <select id="timer" style="background:#0f172a; color:#fff; border:1px solid #334155; padding:5px; border-radius:5px;">
-                <option value="0">Off</option>
-                <option value="180000">3 Mins</option>
-                <option value="300000">5 Mins</option>
-                <option value="600000">10 Mins</option>
-            </select>
+        <div class="tutorial-box">
+            <h3>⚠️ CRITICAL: Use Desktop Mode</h3>
+            <p>Mobile users: Click (⋮) Chrome Menu -> <b>Check "Desktop Site"</b>. This ensures all 10 videos play at once without freezing.</p>
+            <p><b>Note:</b> Change your VPN every 2 hours for maximum channel safety.</p>
         </div>
     </div>
 
-    <div id="video-grid">
-        </div>
+    <div class="ad-row" style="flex-direction:column; align-items:center;">
+        <p style="color:var(--primary); font-size:0.8rem;">SPONSORED BY</p>
+        <script>atOptions = {'key':'031f6b97d186a16274858038b4e2d98a','format':'iframe','height':90,'width':728,'params':{}};</script>
+        <script src="https://www.highperformanceformat.com/031f6b97d186a16274858038b4e2d98a/invoke.js"></script>
+    </div>
 
     <footer>
-        <a href="javascript:void(0)" onclick="openModal('aboutModal')">About Us</a> | 
-        <a href="javascript:void(0)" onclick="openModal('privacyModal')">Privacy Policy</a>
-        <p style="margin-top:20px; opacity:0.5;">&copy; 2026 Multi-Stream Pro Engine - Unlimited Lifetime</p>
+        <p>Multi-Stream Pro v4.2 - Unlimited Lifetime Access</p>
+        <a href="javascript:void(0)" style="color:#64748b" onclick="alert('Nothing will happen to your channel. Safe for lifetime use.')">About Safe Technology</a>
     </footer>
 </div>
 
-<div id="aboutModal" class="modal">
-    <div class="modal-content">
-        <h2>Safe for Lifetime</h2>
-        <p>This engine uses staggered encryption. <b>Nothing will happen to your channel.</b> You can use this blindly for unlimited watch time growth.</p>
-        <button onclick="closeModal('aboutModal')" style="background:var(--primary); color:#000; width:100%;">I Understand</button>
-    </div>
+<script>
+    // 1. LOCKER LOGIC
+    function openSub() {
+        // Replace this URL with your YouTube Channel or Linkvertise link
+        window.open('https://link-center.net/2645038/VuBhMuTSWyaC', '_blank');
+        document.getElementById('timer-text').style.display = 'block';
+        let timeLeft = 15;
+        let timer = setInterval(function(){
+            timeLeft--;
+            document.getElementById('count').textContent = timeLeft;
+            if(timeLeft <= 0){
+                clearInterval(timer);
+                document.getElementById('verify-btn').style.display = 'inline-block';
+            }
+        }, 1000);
+    }
+
+    function verifyLink() {
+        // SMART LINK TRIGGER
+        window.open('https://www.effectivegatecpm.com/rvdy73duei?key=90ea42b18c679c723cbba319b46ca1ad', '_blank');
+        document.getElementById('locker').style.display = 'none';
+        document.getElementById('main-tool').style.display = 'block';
+    }
+
+    // 2. BYPASS ENGINE LOGIC
+    function startEngine() {
+        const url = document.getElementById('targetLink').value;
+        const grid = document.getElementById('video-grid');
+        if(!url) return;
+
+        grid.innerHTML = '';
+        let videoId = '';
+        if(url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
+        else if(url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1];
+        else if(url.includes('shorts/')) videoId = url.split('shorts/')[1];
+
+        const finalUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&playlist=${videoId}&loop=1`;
+
+        for(let i=0; i<10; i++) {
+            setTimeout(() => {
+                const div = document.createElement('div');
+                div.className = 'vid-box';
+                const f = document.createElement('iframe');
+                f.src = finalUrl;
+                f.setAttribute('referrerpolicy', 'no-referrer');
+                f.allow = "autoplay; encrypted-media";
+                div.appendChild(f);
+                grid.appendChild(div);
+            }, i * 1500);
+        }
+    }
+</script>
+
+</body>
+</html>
 </div>
 
 <div id="privacyModal" class="modal">
