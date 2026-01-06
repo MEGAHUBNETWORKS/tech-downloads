@@ -46,7 +46,7 @@ async def create_video():
     except:
         pass
 
-    # Subtitles (FONT FIX: Using DejaVu-Sans which is safe for Linux)
+        # Subtitles (FONT FIX: Using DejaVu-Sans which is safe for Linux)
     subs = TextClip(
         text=script, 
         font_size=70, 
