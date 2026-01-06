@@ -2,7 +2,7 @@ name: Max Money Viral Engine
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Restarts every 6 hours to stay 24/7
+    - cron: '0 */6 * * *' 
   workflow_dispatch:
 
 jobs:
@@ -15,7 +15,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11' # Upgraded to 3.11 to stop version warnings
+          python-version: '3.11'
 
       - name: Install System Dependencies
         run: |
@@ -33,4 +33,3 @@ jobs:
         env:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python bot.py
-
