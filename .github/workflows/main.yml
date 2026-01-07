@@ -1,24 +1,24 @@
-name: 24/7 CGI Factory
+name: run-ai
 on:
-  schedule:
-    - cron: '0 8,16,0 * * *' # 3 Times Daily
   workflow_dispatch:
+  schedule:
+    - cron: '0 */4 * * *' # Uploads every 4 hours for max money
 
 jobs:
-  run-ai:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup
-        uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Install Tools
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Install Dependencies
         run: pip install -r requirements.txt
-      - name: Start Uploads
+      - name: Start Factory
+        run: python factory.py
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          YOUTUBE_SECRET: ${{ secrets.YOUTUBE_SECRET }}
-        run: python factory.py
 
