@@ -1,8 +1,0 @@
-moviepy>=2.0.0
-numpy
-requests
-simple-youtube-api
-google-api-python-client
-google-auth-oauthlib
-google-auth-httplib2
-Pillow
