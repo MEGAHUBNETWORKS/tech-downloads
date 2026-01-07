@@ -40,4 +40,3 @@ jobs:
         env:
           GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
           GROQ_KEY: ${{ secrets.GROQ_KEY }}
-
