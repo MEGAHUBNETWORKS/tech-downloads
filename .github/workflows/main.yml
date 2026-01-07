@@ -24,8 +24,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg imagemagick
-          # Symlink 'magick' to 'convert' so MoviePy can find it
-          if ! command -v convert &> /dev/null; then
+          # Create symlink for MoviePy
+          if [ ! -f /usr/bin/convert ]; then
             sudo ln -s /usr/bin/magick /usr/bin/convert
           fi
 
@@ -40,3 +40,4 @@ jobs:
         env:
           GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
           GROQ_KEY: ${{ secrets.GROQ_KEY }}
+
