@@ -1,24 +1,41 @@
-name: run-ai
+name: ai-shorts-factory
+
 on:
   schedule:
-    - cron: '0 10,13,16,20 * * *' # 4 times daily
-  workflow_dispatch: # Allows you to trigger it manually if you ever want to
+    # 4 posts/day spaced for Shorts testing
+    - cron: '0 3,7,11,15 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    # This line ensures that if the server fails, it tries again up to 3 times
-    continue-on-error: true 
+    timeout-minutes: 30
+    continue-on-error: true
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Install dependencies
-        run: pip install requests numpy moviepy==1.0.3 google-api-python-client google-auth-oauthlib google-genai groq
-      - name: Run Factory
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Install Python deps
+        run: |
+          pip install --upgrade pip
+          pip install requests numpy moviepy==1.0.3 \
+            google-api-python-client google-auth-oauthlib \
+            google-genai groq
+
+      - name: Run Shorts Factory
         run: python factory.py
         env:
           GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
           GROQ_KEY: ${{ secrets.GROQ_KEY }}
+
