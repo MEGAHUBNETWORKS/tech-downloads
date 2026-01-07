@@ -1,9 +1,8 @@
 name: run-ai
 on:
-  workflow_dispatch:
   schedule:
-    # This runs exactly 4 times a day: 00:00, 06:00, 12:00, and 18:00 UTC
-    - cron: '0 0,6,12,18 * * *' 
+    # 10 AM, 1 PM, 4 PM, and 8 PM (Targets lunch, after-work, and evening peaks)
+    - cron: '0 10,13,16,20 * * *' 
 
 jobs:
   build:
