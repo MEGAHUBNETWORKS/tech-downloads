@@ -2,13 +2,13 @@ name: ai-shorts-factory
 
 on:
   schedule:
-    - cron: '0 3,7,11,15 * * *'  # 4 times daily
+    - cron: '0 3,11,19 * * *'  # 3 times daily
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repo
@@ -19,19 +19,20 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install system deps
+      - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg fonts-dejavu
 
-      - name: Install Python deps
+      - name: Install Python dependencies
         run: |
           pip install --upgrade pip
           pip install requests numpy moviepy==1.0.3 "Pillow<10" \
             google-api-python-client google-auth-oauthlib google-genai groq
 
-      - name: Run Shorts Factory
+      - name: Run AI Shorts Factory
         run: python factory.py
         env:
           GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
           GROQ_KEY: ${{ secrets.GROQ_KEY }}
+
