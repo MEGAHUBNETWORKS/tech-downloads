@@ -10,42 +10,46 @@ GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 genai_client = Client(api_key=GEMINI_KEY)
 
 def get_gemini_metadata():
-    """Gemini acts as the SEO Strategist and Writer"""
-    # Gemini generates a unique, interesting scene idea
+    """Gemini acts as the SEO Strategist for High-CPM Audience"""
     topic = random.choice(["Cyberpunk", "GTA 6 Realistic", "Marvel CGI", "Mythology"])
     
-    # Prompting Gemini for SEO-optimized Title, Description, and Tags
-    response = genai_client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=f"Create a viral YouTube Short title, a 2-sentence description with 5 hashtags, and an image prompt for an epic {topic} scene. Format as: Title | Desc | Prompt"
-    )
-    
-    parts = response.text.split("|")
-    return {
-        "title": parts[0].strip(),
-        "desc": parts[1].strip(),
-        "prompt": parts[2].strip()
-    }
+    for attempt in range(3):
+        try:
+            # Prompting for High-CTR "Epic" Metadata
+            response = genai_client.models.generate_content(
+                model="gemini-2.0-flash",
+                contents=f"Generate viral SEO for a {topic} Short. Target: USA/Global audience. Format: Title | Description | Tags | Image Prompt"
+            )
+            parts = response.text.split("|")
+            return {
+                "title": parts[0].strip(),
+                "desc": parts[1].strip(),
+                "tags": parts[2].strip().split(","),
+                "prompt": parts[3].strip()
+            }
+        except Exception as e:
+            print(f"⚠️ Gemini busy, waiting 10s... {e}")
+            time.sleep(10)
+
+    return {"title": "Epic Scene #Shorts", "desc": "Cool CGI", "tags": ["CGI", "Epic"], "prompt": "Epic scene"}
 
 def create_shaking_clip(image_path, duration=0.4):
     clip = ImageClip(image_path).set_duration(duration)
     def shake(get_frame, t):
         frame = get_frame(t)
-        shift_x, shift_y = random.randint(-25, 25), random.randint(-25, 25)
+        shift_x, shift_y = random.randint(-20, 20), random.randint(-20, 20)
         return np.roll(np.roll(frame, shift_x, axis=1), shift_y, axis=0)
     return clip.fl(shake)
 
 def build_video(meta):
-    print(f"🎬 Producing: {meta['title']}")
+    print("🎬 Rendering Epic Fast-Cuts...")
     clips = []
-    for i in range(12): # Fast cuts for high retention
-        seed = random.randint(1, 99999)
-        url = f"https://image.pollinations.ai/prompt/{meta['prompt'].replace(' ', '%20')}?width=1080&height=1920&model=flux&seed={seed}"
+    for i in range(10):
+        url = f"https://image.pollinations.ai/prompt/{meta['prompt'].replace(' ', '%20')}?width=1080&height=1920&model=flux&seed={random.randint(1,999)}"
         with open(f"f{i}.jpg", "wb") as f: f.write(requests.get(url).content)
         clips.append(create_shaking_clip(f"f{i}.jpg"))
     
     final = concatenate_videoclips(clips, method="compose")
-    # Using 'logger=None' to prevent GitHub hang
     final.write_videofile("upload_ready.mp4", fps=30, codec="libx264", logger=None)
     return "upload_ready.mp4"
 
@@ -58,15 +62,30 @@ def upload_to_youtube(video_file, meta):
         'snippet': {
             'title': meta['title'],
             'description': meta['desc'],
-            'categoryId': '24'
+            'tags': meta['tags'],
+            'categoryId': '24', # Entertainment
+            'defaultLanguage': 'en', # Force English
+            'defaultAudioLanguage': 'en'
         },
-        'status': {'privacyStatus': 'public', 'selfDeclaredMadeForKids': False}
+        'status': {
+            'privacyStatus': 'public',
+            'selfDeclaredMadeForKids': False,
+            'embeddable': True
+        },
+        # TARGETING SETTINGS: Specific Location for High Revenue
+        'recordingDetails': {
+            'locationDescription': 'United States',
+            'location': {
+                'latitude': 37.0902,
+                'longitude': -95.7129
+            }
+        }
     }
     
-    print("🚀 Uploading with SEO Metadata...")
+    print(f"🚀 Uploading to USA Audience: {meta['title']}")
     media = MediaFileUpload(video_file, chunksize=-1, resumable=True)
-    youtube.videos().insert(part="snippet,status", body=body, media_body=media).execute()
-    print("✅ SUCCESS: Video is Live!")
+    youtube.videos().insert(part="snippet,status,recordingDetails", body=body, media_body=media).execute()
+    print("✅ SUCCESS: 1M View Target Live!")
 
 if __name__ == "__main__":
     meta = get_gemini_metadata()
