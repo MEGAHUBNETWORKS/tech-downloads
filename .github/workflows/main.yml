@@ -1,7 +1,7 @@
-name: run-ai
+name: legendary-fights-auto
 on:
   schedule:
-    - cron: '0 */4 * * *' # Uploads every 6 hours for lifetime growth
+    - cron: '0 0,4,8,12,16,20 * * *' # Every 4 hours
   workflow_dispatch:
 
 jobs:
@@ -20,5 +20,5 @@ jobs:
           GEMINI_KEY_3: ${{ secrets.GEMINI_KEY_3 }}
           GROQ_KEY: ${{ secrets.GROQ_KEY }}
         run: |
-          pip install requests numpy moviepy==1.0.3 google-api-python-client google-auth-oauthlib google-genai groq
+          pip install requests numpy moviepy==1.0.3 google-api-python-client google-auth-oauthlib google-genai groq Pillow
           python factory.py
