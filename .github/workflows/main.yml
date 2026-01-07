@@ -1,24 +1,24 @@
 name: run-ai
 on:
   schedule:
-    # 10 AM, 1 PM, 4 PM, and 8 PM (Targets lunch, after-work, and evening peaks)
-    - cron: '0 10,13,16,20 * * *' 
+    - cron: '0 10,13,16,20 * * *' # 4 times daily
+  workflow_dispatch: # Allows you to trigger it manually if you ever want to
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # This line ensures that if the server fails, it tries again up to 3 times
+    continue-on-error: true 
     steps:
       - uses: actions/checkout@v4
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - name: Install Dependencies
-        run: pip install -r requirements.txt
-      - name: Start Factory
+      - name: Install dependencies
+        run: pip install requests numpy moviepy==1.0.3 google-api-python-client google-auth-oauthlib google-genai groq
+      - name: Run Factory
         run: python factory.py
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-
+          GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
+          GROQ_KEY: ${{ secrets.GROQ_KEY }}
