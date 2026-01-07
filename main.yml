@@ -1,0 +1,24 @@
+name: 24/7 CGI Factory
+on:
+  schedule:
+    - cron: '0 8,16,0 * * *' # 3 Times Daily
+  workflow_dispatch:
+
+jobs:
+  run-ai:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install Tools
+        run: pip install -r requirements.txt
+      - name: Start Uploads
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          YOUTUBE_SECRET: ${{ secrets.YOUTUBE_SECRET }}
+        run: python factory.py
+
