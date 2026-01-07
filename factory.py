@@ -3,6 +3,11 @@
 # All growth optimizations applied
 # ===========================================
 
+from moviepy.config import change_settings
+
+# Fix for ImageMagick TextClip error
+change_settings({"IMAGEMAGICK_BINARY": "/usr/bin/convert"})
+
 import os, random, math, wave, struct, requests, pickle
 import numpy as np
 from moviepy.editor import ImageClip, concatenate_videoclips, AudioFileClip, TextClip, CompositeVideoClip
@@ -39,7 +44,7 @@ CATEGORY = random.choice(list(CATEGORIES.keys()))
 CFG = CATEGORIES[CATEGORY]
 
 # -------------------------
-# AUDIO GENERATION (AGGRESSIVE + SILENCE)
+# AUDIO GENERATION
 # -------------------------
 def generate_audio(duration=23, filename="audio.wav"):
     fps = 44100
@@ -70,8 +75,6 @@ def get_image(prompt, idx):
 def zoom_shake_clip(clip):
     def zoom_shake(get_frame, t):
         frame = get_frame(t)
-        zoom = 1 + 0.03 * t
-        frame = np.array(frame)
         # Slight shake
         s = 10
         frame = np.roll(np.roll(frame, random.randint(-s, s), axis=0), random.randint(-s, s), axis=1)
@@ -99,14 +102,11 @@ def build_video():
         clips.append(clip)
 
     video = concatenate_videoclips(clips, method="compose")
-
     generate_audio(video.duration)
     audio = AudioFileClip("audio.wav")
-
     final = video.set_audio(audio).set_duration(audio.duration)
     output_file = "short_ready.mp4"
     final.write_videofile(output_file, fps=30, codec="libx264", audio_codec="aac", logger=None)
-
     return output_file, hook_text
 
 # -------------------------
@@ -192,96 +192,4 @@ def upload_to_youtube(video_file, hook_text, category):
 if __name__ == "__main__":
     video_file, hook_text = build_video()
     upload_to_youtube(video_file, hook_text, CATEGORY)
-def generate_thumbnail(category):
-    prompt = CATEGORIES[category]["prompt"] + ", cinematic poster, epic composition, 4k"
-    url = f"https://image.pollinations.ai/prompt/{prompt.replace(' ','%20')}?width=1280&height=720&seed={random.randint(1,99999)}"
-    response = requests.get(url).content
-    thumb_file = "thumbnail.jpg"
-    with open(thumb_file, "wb") as f:
-        f.write(response)
-    return thumb_file
-
-# -------------------------
-# CATEGORY-BASED SEO
-# -------------------------
-def generate_seo(category, hook_text):
-    seo = {}
-    seo_titles = {
-        "cars": [f"{hook_text} | Supercar Moment", f"{hook_text} | Illegal Speed", f"{hook_text} | 900HP Action"],
-        "guns": [f"{hook_text} | Secret Weapon", f"{hook_text} | Military Tech", f"{hook_text} | Live Fire"],
-        "powers": [f"{hook_text} | Unstoppable Power", f"{hook_text} | Human Limit Removed", f"{hook_text} | Superhuman Moment"],
-        "tech": [f"{hook_text} | AI Revealed", f"{hook_text} | Futuristic Tech", f"{hook_text} | Cyberpunk Moment"]
-    }
-    seo['title'] = random.choice(seo_titles[category])
-
-    seo['description'] = (
-        f"Watch this epic {category} moment that was never meant to be seen.\n"
-        f"Stay until the end for maximum impact.\n\n"
-        f"#shorts #viral #{category} #cinematic #ai"
-    )
-
-    seo_tags = {
-        "cars": ["supercar","speed","viral shorts","cinematic","ai generated","epic","future tech"],
-        "guns": ["weapon","military","viral shorts","cinematic","ai generated","tech","power"],
-        "powers": ["superpower","human limit","viral shorts","cinematic","ai generated","energy","epic"],
-        "tech": ["ai","futuristic","viral shorts","cinematic","technology","epic","future"]
-    }
-    seo['tags'] = seo_tags[category]
-    return seo
-
-# -------------------------
-# YOUTUBE UPLOAD
-# -------------------------
-def upload_to_youtube(video_file, hook_text, category):
-    if not os.path.exists('token.json'):
-        print("⚠️ No YouTube credentials (token.json) found. Skipping upload.")
-        return
-
-    with open('token.json', 'rb') as t:
-        credentials = pickle.load(t)
-
-    youtube = build("youtube", "v3", credentials=credentials)
-
-    seo = generate_seo(category, hook_text)
-    thumbnail_file = generate_thumbnail(category)
-
-    body = {
-        'snippet': {
-            'title': seo['title'],
-            'description': seo['description'],
-            'tags': seo['tags'],
-            'categoryId': '24',
-            'defaultLanguage': 'en'
-        },
-        'status': {
-            'privacyStatus': 'public',
-            'selfDeclaredMadeForKids': False
-        },
-        'recordingDetails': {
-            'locationDescription': 'USA',
-            'location': {'latitude': 37.09, 'longitude': -95.71}
-        }
-    }
-
-    media = MediaFileUpload(video_file, chunksize=-1, resumable=True)
-    request = youtube.videos().insert(part="snippet,status,recordingDetails", body=body, media_body=media)
-    response = request.execute()
-
-    youtube.thumbnails().set(videoId=response['id'], media_body=MediaFileUpload(thumbnail_file)).execute()
-    print("🚀 Video uploaded with dynamic thumbnail and optimized SEO!")
-
-# -------------------------
-# RUN
-# -------------------------
-if __name__ == "__main__":
-    video_file, hook_text = build_video()
-    upload_to_youtube(video_file, hook_text, CATEGORY)
-    print(f"💥 HOOK TEXT: {random.choice(CFG['hook'])}")
-    print(f"✅ VIDEO OUTPUT: {output_file}")
-
-# -------------------------
-# RUN
-# -------------------------
-if __name__ == "__main__":
-    build_video()
 
