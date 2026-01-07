@@ -2,7 +2,7 @@ name: ai-shorts-factory
 
 on:
   schedule:
-    - cron: '0 3,7,11,15 * * *'
+    - cron: '0 3,7,11,15 * * *'  # 4 times daily
   workflow_dispatch:
 
 jobs:
