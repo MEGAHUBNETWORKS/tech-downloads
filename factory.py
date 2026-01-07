@@ -9,7 +9,7 @@ from googleapiclient.http import MediaFileUpload
 # CATEGORY CONFIG
 # -------------------------
 CATEGORIES = {
-    "cars": {"prompt": "ultra cinematic close-up supercar, night, rain, neon lights, motion blur, high contrast, aggressive",
+    "cars": {"prompt": "ultra cinematic supercar, night, rain, neon lights, motion blur, high contrast, aggressive",
              "hook": ["NO LIMITS", "ILLEGAL SPEED", "900 HP"], "sound_freq": 45},
     "guns": {"prompt": "futuristic weapon charging energy, sparks, dark background, cinematic lighting, aggressive",
              "hook": ["MILITARY ONLY", "DO NOT TOUCH", "LIVE WEAPON"], "sound_freq": 60},
@@ -93,8 +93,55 @@ def build_video():
     return output_file, hook_text
 
 # -------------------------
-# RUN (simplified YouTube upload can be added later)
+# SEO + Thumbnail Generation
+# -------------------------
+def generate_seo(hook_text, category):
+    seo = {}
+    seo['title'] = f"{hook_text} | Epic {category.capitalize()} Shorts"
+    seo['description'] = f"Watch this epic {category} moment! AI-generated cinematic content. #shorts #viral #{category}"
+    seo_tags = {
+        "cars":["supercar","speed","ai","viral","shorts","cinematic"],
+        "guns":["weapons","ai","viral","shorts","action","cinematic"],
+        "powers":["superpower","ai","viral","shorts","epic","cinematic"],
+        "tech":["ai","futuristic","viral","shorts","cyberpunk","cinematic"]
+    }
+    seo['tags'] = seo_tags[category]
+    return seo
+
+def generate_thumbnail(category):
+    prompt = f"{category} cinematic epic poster 4k"
+    url = f"https://image.pollinations.ai/prompt/{prompt.replace(' ','%20')}?width=1280&height=720&seed={random.randint(1,99999)}"
+    img_data = requests.get(url).content
+    with open("thumbnail.jpg", "wb") as f:
+        f.write(img_data)
+    return "thumbnail.jpg"
+
+# -------------------------
+# UPLOAD TO YOUTUBE
+# -------------------------
+def upload_to_youtube(video_file, hook_text, category):
+    if not os.path.exists("token.json"):
+        print("⚠️ No YouTube token found. Skipping upload.")
+        return
+    with open("token.json", "rb") as t:
+        creds = pickle.load(t)
+    youtube = build("youtube", "v3", credentials=creds)
+    seo = generate_seo(hook_text, category)
+    thumb_file = generate_thumbnail(category)
+    body = {
+        "snippet": {"title": seo['title'], "description": seo['description'], "tags": seo['tags'], "categoryId": "24"},
+        "status": {"privacyStatus": "public", "selfDeclaredMadeForKids": False}
+    }
+    media = MediaFileUpload(video_file, chunksize=-1, resumable=True)
+    req = youtube.videos().insert(part="snippet,status", body=body, media_body=media)
+    res = req.execute()
+    youtube.thumbnails().set(videoId=res['id'], media_body=MediaFileUpload(thumb_file)).execute()
+    print(f"🚀 Uploaded: {seo['title']}")
+
+# -------------------------
+# RUN
 # -------------------------
 if __name__ == "__main__":
-    build_video()
-    
+    video_file, hook_text = build_video()
+    upload_to_youtube(video_file, hook_text, CATEGORY)
+
