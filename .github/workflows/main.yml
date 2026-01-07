@@ -20,5 +20,6 @@ jobs:
           GEMINI_KEY_3: ${{ secrets.GEMINI_KEY_3 }}
           GROQ_KEY: ${{ secrets.GROQ_KEY }}
         run: |
-          pip install requests numpy moviepy==1.0.3 google-api-python-client google-auth-oauthlib google-genai groq Pillow
-          python factory.py
+          # This is the line that actually starts the bot
+          python factory.py 
+
