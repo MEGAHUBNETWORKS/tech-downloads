@@ -1,11 +1,8 @@
-google-genai==1.0.0
-moviepy==1.0.3
-Pillow==9.5.0
-requests==2.31.0
-huggingface_hub
-scipy
-google-api-python-client
-google-auth-oauthlib
-google-auth-httplib2
 requests
 numpy
+moviepy==1.0.3
+google-api-python-client
+google-auth-oauthlib
+google-genai
+groq
+librosa
