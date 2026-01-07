@@ -1,7 +1,8 @@
 google-api-python-client
-google-auth-oauthlib
+google-auth-oauthlio
 google-genai==1.0.0
-moviepy==2.0.0.dev2
+moviepy==1.0.3
+opencv-python
 requests
 huggingface_hub
 scipy
