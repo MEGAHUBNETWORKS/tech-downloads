@@ -12,22 +12,33 @@ def get_viral_strategy():
         with open("history.json", "r") as f: history = json.load(f)
     else: history = []
 
-    # SEO Master Strategy for millions of views
+    # SEO Master Strategy 2026
     instruction = (
-        f"Act as SEO MASTER 2026. Trends: John Wick 5, GTA 6 Trailer, Marvel Doom. "
-        f"Avoid: {history[-10:]}. Generate: 1. Click-Magnet Title, 2. 20 Viral Tags, 3. 4K Prompt."
+        f"Act as SEO MASTER 2026. Analyze trends for GTA 6 and Marvel. "
+        f"Avoid: {history[-10:]}. Generate: 1. Click-Magnet Title, "
+        "2. 20 Viral Tags, 3. 4K CGI Prompt."
     )
     
-    # Try the newest model first, backup to stable 2.5 if needed
+    # 2026 STABLE MODELS:
+    # Use 'gemini-2.5-flash' for stability 
+    # Use 'gemini-3-flash' for advanced reasoning (if your account has access)
     try:
-        model_name = "gemini-2.0-flash" # Most stable for high-speed factory runs
-        response = client.models.generate_content(model=model_name, contents=instruction)
-    except:
-        response = client.models.generate_content(model="gemini-1.5-flash", contents=instruction)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash", 
+            contents=instruction
+        )
+    except Exception as e:
+        print(f"Primary model failed, trying fallback: {e}")
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-001", 
+            contents=instruction
+        )
     
-    # Save to Memory
     history.append(response.text[:50])
     with open("history.json", "w") as f: json.dump(history, f)
+    
+    # ... rest of your parsing logic
+
     
     return {
         "title": "I FOUND JOHN WICK IN GTA 6! 😱 (Ultra 4K VFX)",
