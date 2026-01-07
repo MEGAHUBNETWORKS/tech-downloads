@@ -1,11 +1,15 @@
 # ===========================================
-# ULTIMATE VIRAL SHORTS FACTORY + AUTOMATIC YOUTUBE UPLOAD
-# All growth optimizations applied
+# FIX FOR IMAGEMAGICK / TextClip ERROR
 # ===========================================
 
 from moviepy.config import change_settings
+import os, random, math, wave, struct, requests, pickle
+import numpy as np
+from moviepy.editor import ImageClip, concatenate_videoclips, AudioFileClip, TextClip, CompositeVideoClip
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
-# Fix for ImageMagick TextClip error
+# Explicit path to ImageMagick binary
 change_settings({"IMAGEMAGICK_BINARY": "/usr/bin/convert"})
 
 import os, random, math, wave, struct, requests, pickle
