@@ -4,48 +4,57 @@ from moviepy.editor import ImageClip, concatenate_videoclips, AudioFileClip
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.genai import Client
+from groq import Groq
 
-# --- AI CONFIG ---
-GEMINI_KEY = os.getenv("GEMINI_API_KEY")
-genai_client = Client(api_key=GEMINI_KEY)
+# --- KEY ROTATION ---
+GEMINI_KEYS = [os.getenv("GEMINI_KEY_1")]
+GROQ_KEY = os.getenv("GROQ_KEY")
 
-def get_gemini_metadata():
-    """Gemini acts as the SEO Strategist for High-CPM Audience"""
-    topic = random.choice(["Cyberpunk", "GTA 6 Realistic", "Marvel CGI", "Mythology"])
+def get_metadata():
+    """Cycles through keys for Unlimited SEO"""
+    topic = random.choice(["Cyberpunk 2026", "Realistic GTA 6", "Marvel CGI", "Mythology"])
     
-    for attempt in range(3):
+    # 1. Try Gemini first
+    for key in GEMINI_KEYS:
+        if not key: continue
         try:
-            # Prompting for High-CTR "Epic" Metadata
-            response = genai_client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=f"Generate viral SEO for a {topic} Short. Target: USA/Global audience. Format: Title | Description | Tags | Image Prompt"
-            )
-            parts = response.text.split("|")
-            return {
-                "title": parts[0].strip(),
-                "desc": parts[1].strip(),
-                "tags": parts[2].strip().split(","),
-                "prompt": parts[3].strip()
-            }
-        except Exception as e:
-            print(f"⚠️ Gemini busy, waiting 10s... {e}")
-            time.sleep(10)
+            client = Client(api_key=key)
+            resp = client.models.generate_content(model="gemini-2.0-flash", contents=f"Viral SEO: {topic}. Format: Title | Desc | Tags | Prompt")
+            return parse_meta(resp.text)
+        except: continue
 
-    return {"title": "Epic Scene #Shorts", "desc": "Cool CGI", "tags": ["CGI", "Epic"], "prompt": "Epic scene"}
+    # 2. Try Groq (Unlimited Lifetime Backup)
+    if GROQ_KEY:
+        try:
+            client = Groq(api_key=GROQ_KEY)
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": f"Viral SEO: {topic}. Format: Title | Desc | Tags | Prompt"}]
+            )
+            return parse_meta(completion.choices[0].message.content)
+        except Exception as e:
+            print(f"Groq error: {e}")
+
+    return {"title": "Epic Scene 2026", "desc": "Cool CGI", "tags": ["CGI"], "prompt": "8k realistic action"}
+
+def parse_meta(text):
+    p = text.split("|")
+    return {"title": p[0].strip(), "desc": p[1].strip(), "tags": p[2].split(","), "prompt": p[3].strip()}
 
 def create_shaking_clip(image_path, duration=0.4):
     clip = ImageClip(image_path).set_duration(duration)
     def shake(get_frame, t):
         frame = get_frame(t)
-        shift_x, shift_y = random.randint(-20, 20), random.randint(-20, 20)
-        return np.roll(np.roll(frame, shift_x, axis=1), shift_y, axis=0)
+        # Dynamic shake for that 'Realistic Action' feel
+        sx, sy = random.randint(-20, 20), random.randint(-20, 20)
+        return np.roll(np.roll(frame, sx, axis=1), sy, axis=0)
     return clip.fl(shake)
 
 def build_video(meta):
-    print("🎬 Rendering Epic Fast-Cuts...")
+    print(f"🎬 Creating: {meta['title']}")
     clips = []
-    for i in range(10):
-        url = f"https://image.pollinations.ai/prompt/{meta['prompt'].replace(' ', '%20')}?width=1080&height=1920&model=flux&seed={random.randint(1,999)}"
+    for i in range(12): # High-retention fast cuts
+        url = f"https://image.pollinations.ai/prompt/{meta['prompt'].replace(' ', '%20')}?width=1080&height=1920&model=flux&seed={random.randint(1,99999)}"
         with open(f"f{i}.jpg", "wb") as f: f.write(requests.get(url).content)
         clips.append(create_shaking_clip(f"f{i}.jpg"))
     
@@ -54,8 +63,7 @@ def build_video(meta):
     return "upload_ready.mp4"
 
 def upload_to_youtube(video_file, meta):
-    with open('token.json', 'rb') as token:
-        credentials = pickle.load(token)
+    with open('token.json', 'rb') as token: credentials = pickle.load(token)
     youtube = build("youtube", "v3", credentials=credentials)
     
     body = {
@@ -63,32 +71,22 @@ def upload_to_youtube(video_file, meta):
             'title': meta['title'],
             'description': meta['desc'],
             'tags': meta['tags'],
-            'categoryId': '24', # Entertainment
-            'defaultLanguage': 'en', # Force English
-            'defaultAudioLanguage': 'en'
+            'categoryId': '24',
+            'defaultLanguage': 'en'
         },
-        'status': {
-            'privacyStatus': 'public',
-            'selfDeclaredMadeForKids': False,
-            'embeddable': True
-        },
-        # TARGETING SETTINGS: Specific Location for High Revenue
+        'status': {'privacyStatus': 'public', 'selfDeclaredMadeForKids': False},
         'recordingDetails': {
             'locationDescription': 'United States',
-            'location': {
-                'latitude': 37.0902,
-                'longitude': -95.7129
-            }
+            'location': {'latitude': 37.0902, 'longitude': -95.7129}
         }
     }
     
-    print(f"🚀 Uploading to USA Audience: {meta['title']}")
     media = MediaFileUpload(video_file, chunksize=-1, resumable=True)
     youtube.videos().insert(part="snippet,status,recordingDetails", body=body, media_body=media).execute()
-    print("✅ SUCCESS: 1M View Target Live!")
+    print("✅ SUCCESS: Live on YouTube!")
 
 if __name__ == "__main__":
-    meta = get_gemini_metadata()
-    video_path = build_video(meta)
-    upload_to_youtube(video_path, meta)
+    meta = get_metadata()
+    path = build_video(meta)
+    upload_to_youtube(path, meta)
 
